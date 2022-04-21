@@ -3,6 +3,7 @@ package br.com.dbc.vimserdev.feedbackcontinuo.security;
 import java.util.Collections;
 import java.util.Date;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntitiy;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,22 +27,22 @@ public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-//    public String getToken(Authentication authentication) {
-//        LoginEntity user = (LoginEntity) authentication.getPrincipal();
-//
-//        Date now = new Date();
-//        Date exp = new Date(now.getTime() + Long.parseLong(expiration));
-//
-//        String token = Jwts.builder()
-//                .setIssuer("pessoa-api")
-//                .setSubject(user.getIdLogin().toString())
-//                .setIssuedAt(now)
-//                .setExpiration(exp)
-//                .signWith(SignatureAlgorithm.HS256, secret)
-//                .compact();
-//
-//        return PREFIX + token;
-//    }
+    public String getToken(Authentication authentication) {
+        UserEntitiy user = (UserEntitiy) authentication.getPrincipal();
+
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + Long.parseLong(expiration));
+
+        String token = Jwts.builder()
+                .setIssuer("feedback-continuos")
+                .setSubject(user.getUserId())
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+
+        return PREFIX + token;
+    }
 
     public Authentication getAuthentication(HttpServletRequest request) {
         String tokenBearer = request.getHeader(HEADER_AUTHORIZATION); // Bearer hfUIfs
