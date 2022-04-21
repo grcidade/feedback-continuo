@@ -26,14 +26,14 @@ create table feedback (
 );
 
 create table tags (
-	tag_id VARCHAR(36) not null,
+	tag_id SERIAL not null,
 	name VARCHAR(45) not null unique,
 	primary key(tag_id)
 );
 
 create table feedback_tags (
 	feedback_id VARCHAR(36) not null,
-	tag_id VARCHAR(36) not null,
+	tag_id SERIAL not null,
 	constraint fk_ft_feedback_id
 	foreign key (feedback_id)
 		references feedback (feedback_id),
