@@ -55,4 +55,5 @@ public class AuthController {
         login.setPassword(userCreateDTO.getPassword());
         return auth(login);
     }
+
 }
