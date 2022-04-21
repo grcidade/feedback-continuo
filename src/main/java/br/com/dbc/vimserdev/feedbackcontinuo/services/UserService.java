@@ -20,7 +20,7 @@ public class UserService {
     private final ObjectMapper mapper;
 
     public UserDTO create(UserCreateDTO userCreateDTO) throws BusinessRuleException {
-        if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail())) {
+        if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BusinessRuleException("Email inválido ou já existente.");
         }
 
