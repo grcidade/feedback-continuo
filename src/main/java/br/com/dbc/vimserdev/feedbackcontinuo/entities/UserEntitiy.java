@@ -1,20 +1,22 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity(name = "users")
-public class UserEntitiy {
+public class UserEntitiy implements UserDetails {
 
     @Id
     @Column(name = "user_id")
@@ -32,12 +34,48 @@ public class UserEntitiy {
     @Column(name = "profile_image")
     private String profileImage;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "feedbackEntityGiven", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     private List<FeedbackEntity> feedbacksGiven;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "feedbackEntityReceived", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     private List<FeedbackEntity> feedbackEntities;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

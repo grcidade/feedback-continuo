@@ -25,14 +25,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable().and().cors().and()
                 .csrf().disable()
-//                .authorizeRequests()
-//                .antMatchers("/").permitAll()
-//                .antMatchers("/auth").permitAll()
-//                .antMatchers("/auth/register").permitAll()
-//                .anyRequest().authenticated()
-//                .and().addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
                 .authorizeRequests()
-                .anyRequest();
+                .antMatchers("/").permitAll()
+                .antMatchers("/auth/**").permitAll()
+                .anyRequest().authenticated()
+                .and().addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

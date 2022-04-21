@@ -36,6 +36,10 @@ public class UserService {
         return userRepository.findByEmailAndPassword(email, password);
     }
 
+    public Optional<UserEntitiy> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     private boolean isValidEmail(String email) {
         String[] partitioned = email.split("@");
         return partitioned[1].equals("dbccompany.com.br");

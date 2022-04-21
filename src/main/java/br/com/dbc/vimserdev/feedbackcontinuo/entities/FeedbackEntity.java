@@ -1,16 +1,14 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -37,10 +35,12 @@ public class FeedbackEntity {
     @Column(name = "feedback_user_id", insertable = false, updatable = false)
     private String feedbackUserId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntitiy feedbackEntityGiven;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feedback_user_id")
     private UserEntitiy feedbackEntityReceived;
