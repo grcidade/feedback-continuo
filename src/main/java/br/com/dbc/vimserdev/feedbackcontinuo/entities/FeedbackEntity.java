@@ -26,7 +26,7 @@ public class FeedbackEntity {
     private String message;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "is_anonymous")
     private Boolean isAnonymous;
