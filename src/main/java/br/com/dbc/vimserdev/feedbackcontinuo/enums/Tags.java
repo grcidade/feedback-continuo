@@ -2,7 +2,7 @@ package br.com.dbc.vimserdev.feedbackcontinuo.enums;
 
 public enum Tags {
 
-    JAVA_SCRIPT("JavaScript"),
+    JAVASCRIPT("JavaScript"),
     BACKEND("Backend"),
     FRONTEND( "Frontend"),
     AGILE("Agile"),

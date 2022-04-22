@@ -64,11 +64,18 @@ public class FeedbackService {
                 .map(feedback -> {
                     try {
                         UserEntity gived = userService.getUserById(feedback.getUserId());
+                        // TODO - arrumar essa monstruosidade
+                        List<String> tags = new ArrayList<>();
+                        feedback.getTags().forEach(tagsEntity -> {
+                            String tag = tagsEntity.getName().toUpperCase().replace(" ", "_");
+                            tags.add(tag);
+                        });
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
                                 .userName(gived.getName())
                                 .profileUserImage(gived.getProfileImage())
                                 .message(feedback.getMessage())
+                                .tags(tags)
                                 .createdAt(feedback.getCreatedAt())
                                 .build();
                     } catch (BusinessRuleException e) {
@@ -85,6 +92,12 @@ public class FeedbackService {
                 .map(feedback -> {
                     try {
                         UserEntity gived = userService.getUserById(feedback.getFeedbackUserId());
+                        // TODO - arrumar essa monstruosidade
+                        List<String> tags = new ArrayList<>();
+                        feedback.getTags().forEach(tagsEntity -> {
+                            String tag = tagsEntity.getName().toUpperCase().replace(" ", "_");
+                            tags.add(tag);
+                        });
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
                                 .userName(gived.getName())
