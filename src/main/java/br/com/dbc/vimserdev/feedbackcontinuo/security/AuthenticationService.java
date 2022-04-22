@@ -1,5 +1,5 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.security;
-import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntitiy;
+import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +17,7 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<UserEntitiy> optionalUser = userService.findByEmail(email);
+        Optional<UserEntity> optionalUser = userService.findByEmail(email);
 
         if (optionalUser.isPresent()) {
             return optionalUser.get();
