@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,6 +14,7 @@ public class FeedbackCompleteDTO {
     private String userName;
     private String profileUserImage;
     private String message;
+    private List<String> tags;
     private LocalDateTime createdAt;
 
 }

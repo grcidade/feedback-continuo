@@ -1,6 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.dtos;
 
-import br.com.dbc.vimserdev.feedbackcontinuo.entities.TagEntity;
+import br.com.dbc.vimserdev.feedbackcontinuo.enums.Tags;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -13,7 +13,7 @@ public class FeedbackCreateDTO {
     @NotEmpty
     private String message;
     private Boolean isAnonymous;
-//    private List<TagEntity> tags;
+    private List<Tags> tags;
     @NotEmpty
     @Size(min = 36, max = 36)
     private String feedbackUserId;
