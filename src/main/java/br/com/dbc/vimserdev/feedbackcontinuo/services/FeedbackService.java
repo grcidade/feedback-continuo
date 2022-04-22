@@ -5,7 +5,9 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.FeedbackEntity;
+import br.com.dbc.vimserdev.feedbackcontinuo.entities.TagEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
+import br.com.dbc.vimserdev.feedbackcontinuo.enums.Tags;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.FeedbackRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +15,11 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +37,18 @@ public class FeedbackService {
             createDTO.setIsAnonymous(false);
         }
 
+        List<TagEntity> tags = new ArrayList<>();
+        for(Tags tag : createDTO.getTags()){
+            TagEntity usersTag = TagEntity.builder()
+                    .tagId(tag.getId()).build();
+            tags.add(usersTag);
+        }
+
         FeedbackEntity entity = mapper.convertValue(createDTO, FeedbackEntity.class);
         entity.setFeedbackEntityGiven(user);
         entity.setUserId(user.getUserId());
         entity.setFeedbackEntityReceived(received);
+        entity.setTags(tags);
 
         FeedbackEntity created = feedbackRepository.save(entity);
 
@@ -77,6 +91,7 @@ public class FeedbackService {
                                 .userName(gived.getName())
                                 .profileUserImage(gived.getProfileImage())
                                 .message(feedback.getMessage())
+//                                .tags(feedback.getTags().stream().map(TagEntity::getTagName).collect(Collectors.toList()))
                                 .createdAt(feedback.getCreatedAt())
                                 .build();
                     } catch (BusinessRuleException e) {

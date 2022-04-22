@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,6 +51,6 @@ public class FeedbackEntity {
     @JoinTable(name = "feedback_tags",
             joinColumns = @JoinColumn(name = "feedback_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<TagEntity> tags;
+    private List<TagEntity> tags;
 
 }
