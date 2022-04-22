@@ -3,7 +3,7 @@ package br.com.dbc.vimserdev.feedbackcontinuo.security;
 import java.util.Collections;
 import java.util.Date;
 
-import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntitiy;
+import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ public class TokenService {
     private String secret;
 
     public String getToken(Authentication authentication) {
-        UserEntitiy user = (UserEntitiy) authentication.getPrincipal();
+        UserEntity user = (UserEntity) authentication.getPrincipal();
 
         Date now = new Date();
         Date exp = new Date(now.getTime() + Long.parseLong(expiration));
