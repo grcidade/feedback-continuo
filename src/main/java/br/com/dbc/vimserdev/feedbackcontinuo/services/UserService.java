@@ -2,7 +2,7 @@ package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
-import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntitiy;
+import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +28,15 @@ public class UserService {
             throw new BusinessRuleException("Email inválido ou já existente.");
         }
 
-        UserEntitiy entity = mapper.convertValue(userCreateDTO, UserEntitiy.class);
+        UserEntity entity = mapper.convertValue(userCreateDTO, UserEntity.class);
         entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
 
-        UserEntitiy created = userRepository.save(entity);
+        UserEntity created = userRepository.save(entity);
 
         return mapper.convertValue(created, UserDTO.class);
     }
 
-    public Optional<UserEntitiy> findByEmail(String email) {
+    public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -53,14 +52,37 @@ public class UserService {
         return userRepository.findAll().stream().map(userEntitiy -> mapper.convertValue(userEntitiy, UserDTO.class)).toList();
     }
 
-    public UserDTO getLogedUser() throws BusinessRuleException {
+    protected UserEntity getLoged() throws BusinessRuleException {
         String userIdLoged = getLogedUserId();
-        Optional<UserDTO> userLoged = userRepository.findById(userIdLoged).map(user -> mapper.convertValue(user, UserDTO.class));
+        Optional<UserEntity> userLoged = userRepository.findById(userIdLoged);
         if(userLoged.isPresent()){
             return userLoged.get();
         }else {
             throw new BusinessRuleException("Ninguém logado");
         }
+    }
+
+    public UserDTO getLogedUser() throws BusinessRuleException {
+        String userIdLoged = getLogedUserId();
+        Optional<UserDTO> userLoged = userRepository.findById(userIdLoged).map(userEntity -> mapper.convertValue(userEntity, UserDTO.class));
+        if(userLoged.isPresent()){
+            return userLoged.get();
+        }else {
+            throw new BusinessRuleException("Ninguém logado");
+        }
+    }
+
+    protected UserEntity getReceveidUser(String id) throws BusinessRuleException {
+        UserEntity loged = getLoged();
+        UserEntity target = userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não econtrado"));
+        if (loged.equals(target)) {
+            throw new BusinessRuleException("Não é possível atribuir feedbacks a si mesmo.");
+        }
+        return target;
+    }
+
+    protected UserEntity getUserById(String id) throws BusinessRuleException {
+        return userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Id inválido"));
     }
 
     private boolean isValidEmail(String email) {
