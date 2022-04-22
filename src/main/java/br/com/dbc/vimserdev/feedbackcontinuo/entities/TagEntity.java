@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -15,7 +15,7 @@ import java.util.Set;
 public class TagEntity {
 
     @Id
-    @Column(name = "id_role", columnDefinition = "serial")
+    @Column(name = "tag_id", columnDefinition = "serial")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tagId;
 
@@ -24,5 +24,5 @@ public class TagEntity {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tags")
-    private Set<FeedbackEntity> feedbacks;
+    private List<FeedbackEntity> feedbacks;
 }
