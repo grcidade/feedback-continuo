@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -20,9 +20,9 @@ public class TagEntity {
     private Integer tagId;
 
     @Column(name = "name")
-    private String tagName;
+    private String name;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tags")
-    private List<FeedbackEntity> feedbacks;
+    private Set<FeedbackEntity> feedbacks;
 }

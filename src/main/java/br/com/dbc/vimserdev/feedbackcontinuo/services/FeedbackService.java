@@ -15,10 +15,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +24,7 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final UserService userService;
+    private final TagService tagService;
     private final ObjectMapper mapper;
 
     public FeedbackDTO create(FeedbackCreateDTO createDTO) throws BusinessRuleException {
@@ -37,23 +35,24 @@ public class FeedbackService {
             createDTO.setIsAnonymous(false);
         }
 
-        List<TagEntity> tags = new ArrayList<>();
-        for(Tags tag : createDTO.getTags()){
-            TagEntity usersTag = TagEntity.builder()
-                    .tagId(tag.getId()).build();
-            tags.add(usersTag);
-        }
-
         FeedbackEntity entity = mapper.convertValue(createDTO, FeedbackEntity.class);
         entity.setFeedbackEntityGiven(user);
         entity.setUserId(user.getUserId());
         entity.setFeedbackEntityReceived(received);
+
+        Set<TagEntity> tags = new HashSet<>();
+        createDTO.getTags().forEach(tag -> {
+            TagEntity tagEntity = tagService.findTag(tag);
+            tags.add(tagEntity);
+        });
+
         entity.setTags(tags);
 
         FeedbackEntity created = feedbackRepository.save(entity);
 
         FeedbackDTO createdDTO = mapper.convertValue(created, FeedbackDTO.class);
         createdDTO.setUserId(user.getUserId());
+        createdDTO.setTags(createDTO.getTags());
 
         return createdDTO;
     }
