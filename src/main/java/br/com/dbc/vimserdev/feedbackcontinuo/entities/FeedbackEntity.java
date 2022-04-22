@@ -38,12 +38,12 @@ public class FeedbackEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntitiy feedbackEntityGiven;
+    private UserEntity feedbackEntityGiven;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feedback_user_id")
-    private UserEntitiy feedbackEntityReceived;
+    private UserEntity feedbackEntityReceived;
 
     @JsonIgnore
     @ManyToMany
