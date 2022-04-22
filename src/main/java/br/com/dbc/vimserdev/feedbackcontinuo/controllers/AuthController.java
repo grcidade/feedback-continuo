@@ -30,7 +30,7 @@ public class AuthController {
     private final TokenService tokenService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<String> auth(@RequestBody @Valid LoginDTO loginDTO) {
+    public ResponseEntity<String> login(@RequestBody @Valid LoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(),
@@ -42,10 +42,6 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-//    @PostMapping("/sign-up")
-//    public UserDTO register(@RequestBody @Valid UserCreateDTO userCreateDTO) throws BusinessRuleException {
-//        return userService.create(userCreateDTO);
-//    }
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> register(@RequestBody @Valid UserCreateDTO userCreateDTO) throws BusinessRuleException {
@@ -53,7 +49,7 @@ public class AuthController {
         LoginDTO login = new LoginDTO();
         login.setEmail(userCreateDTO.getEmail());
         login.setPassword(userCreateDTO.getPassword());
-        return auth(login);
+        return login(login);
     }
 
 }
