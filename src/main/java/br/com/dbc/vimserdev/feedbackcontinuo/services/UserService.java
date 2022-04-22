@@ -13,7 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,16 +41,30 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    private boolean isValidEmail(String email) {
-        String[] partitioned = email.split("@");
-        return partitioned[1].equals("dbccompany.com.br");
-    }
-
     public String getLogedUserId(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return (String) authentication.getPrincipal();
         }
         return null;
+    }
+
+    public List<UserDTO> getAllUsers(){
+        return userRepository.findAll().stream().map(userEntitiy -> mapper.convertValue(userEntitiy, UserDTO.class)).toList();
+    }
+
+    public UserDTO getLogedUser() throws BusinessRuleException {
+        String userIdLoged = getLogedUserId();
+        Optional<UserDTO> userLoged = userRepository.findById(userIdLoged).map(user -> mapper.convertValue(user, UserDTO.class));
+        if(userLoged.isPresent()){
+            return userLoged.get();
+        }else {
+            throw new BusinessRuleException("Ninguém logado");
+        }
+    }
+
+    private boolean isValidEmail(String email) {
+        String[] partitioned = email.split("@");
+        return partitioned[1].equals("dbccompany.com.br");
     }
 }
