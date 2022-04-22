@@ -1,14 +1,14 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.repositories;
 
-import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntitiy;
+import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntitiy, String> {
+public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-    Optional<UserEntitiy> findByEmail(String email);
-    Optional<UserEntitiy> findByEmailAndPassword(String email, String password);
+    Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findByEmailAndPassword(String email, String password);
 }
