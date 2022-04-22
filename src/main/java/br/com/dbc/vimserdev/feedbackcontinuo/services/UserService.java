@@ -7,6 +7,9 @@ import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +35,6 @@ public class UserService {
         return mapper.convertValue(created, UserDTO.class);
     }
 
-    public Optional<UserEntitiy> findByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
-    }
-
     public Optional<UserEntitiy> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -43,5 +42,13 @@ public class UserService {
     private boolean isValidEmail(String email) {
         String[] partitioned = email.split("@");
         return partitioned[1].equals("dbccompany.com.br");
+    }
+
+    public String getLogedUserId(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return (String) authentication.getPrincipal();
+        }
+        return null;
     }
 }
