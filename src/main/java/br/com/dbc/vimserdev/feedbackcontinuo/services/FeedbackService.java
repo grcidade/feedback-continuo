@@ -31,6 +31,7 @@ public class FeedbackService {
         UserEntity user = userService.getLoged();
 
         UserEntity received = userService.getReceveidUser(createDTO.getFeedbackUserId());
+
         if (createDTO.getIsAnonymous() == null) {
             createDTO.setIsAnonymous(false);
         }
@@ -70,6 +71,13 @@ public class FeedbackService {
                             String tag = tagsEntity.getName().toUpperCase().replace(" ", "_");
                             tags.add(tag);
                         });
+
+                        if (feedback.getIsAnonymous() == true) {
+                            UserEntity anonymous = userService.getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
+                            gived.setName(anonymous.getName());
+                            gived.setProfileImage(anonymous.getProfileImage());
+                        }
+
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
                                 .userName(gived.getName())
@@ -98,12 +106,19 @@ public class FeedbackService {
                             String tag = tagsEntity.getName().toUpperCase().replace(" ", "_");
                             tags.add(tag);
                         });
+
+                        if (feedback.getIsAnonymous() == true) {
+                            UserEntity anonymous = userService.getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
+                            gived.setName(anonymous.getName());
+                            gived.setProfileImage(anonymous.getProfileImage());
+                        }
+
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
                                 .userName(gived.getName())
                                 .profileUserImage(gived.getProfileImage())
                                 .message(feedback.getMessage())
-//                                .tags(feedback.getTags().stream().map(TagEntity::getTagName).collect(Collectors.toList()))
+                                .tags(tags)
                                 .createdAt(feedback.getCreatedAt())
                                 .build();
                     } catch (BusinessRuleException e) {

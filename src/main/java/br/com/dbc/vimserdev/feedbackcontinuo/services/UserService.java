@@ -28,6 +28,11 @@ public class UserService {
             throw new BusinessRuleException("Email inválido ou já existente.");
         }
 
+        if (userCreateDTO.getProfileImage() == null) {
+            UserEntity anonymous = getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
+            userCreateDTO.setProfileImage(anonymous.getProfileImage());
+        }
+
         UserEntity entity = mapper.convertValue(userCreateDTO, UserEntity.class);
         entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
 
