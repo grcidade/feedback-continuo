@@ -7,10 +7,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping
-    public FeedbackDTO create(FeedbackCreateDTO createDTO) throws BusinessRuleException {
+    public FeedbackDTO create(@RequestBody FeedbackCreateDTO createDTO) throws BusinessRuleException {
         return feedbackService.create(createDTO);
     }
 
