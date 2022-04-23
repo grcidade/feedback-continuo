@@ -72,7 +72,7 @@ public class FeedbackService {
                             tags.add(tag);
                         });
 
-                        if (feedback.getIsAnonymous() == true) {
+                        if (feedback.getIsAnonymous()) {
                             UserEntity anonymous = userService.getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
                             gived.setName(anonymous.getName());
                             gived.setProfileImage(anonymous.getProfileImage());
@@ -107,7 +107,7 @@ public class FeedbackService {
                             tags.add(tag);
                         });
 
-                        if (feedback.getIsAnonymous() == true) {
+                        if (feedback.getIsAnonymous()) {
                             UserEntity anonymous = userService.getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
                             gived.setName(anonymous.getName());
                             gived.setProfileImage(anonymous.getProfileImage());
