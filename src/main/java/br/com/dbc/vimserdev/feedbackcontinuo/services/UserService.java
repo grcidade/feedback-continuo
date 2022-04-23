@@ -53,18 +53,9 @@ public class UserService {
         return null;
     }
 
-    public List<UserDTO> getAllUsers(){
-        return userRepository.findAll().stream().map(userEntitiy -> mapper.convertValue(userEntitiy, UserDTO.class)).toList();
-    }
-
-    protected UserEntity getLoged() throws BusinessRuleException {
-        String userIdLoged = getLogedUserId();
-        Optional<UserEntity> userLoged = userRepository.findById(userIdLoged);
-        if(userLoged.isPresent()){
-            return userLoged.get();
-        }else {
-            throw new BusinessRuleException("Ninguém logado");
-        }
+    public List<UserDTO> getAllUsersExceptLogedUser(){
+        return userRepository.findAllByUserIdIsNotAndUserIdIsNot(getLogedUserId(), "aadebf96-ea3c-4719-b6d2-f38f50ab9cf6")
+                .stream().map(userEntitiy -> mapper.convertValue(userEntitiy, UserDTO.class)).toList();
     }
 
     public UserDTO getLogedUser() throws BusinessRuleException {
@@ -78,12 +69,22 @@ public class UserService {
     }
 
     protected UserEntity getReceveidUser(String id) throws BusinessRuleException {
-        UserEntity loged = getLoged();
+        UserEntity loged = getLogedUserEntity();
         UserEntity target = userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não econtrado"));
         if (loged.equals(target)) {
             throw new BusinessRuleException("Não é possível atribuir feedbacks a si mesmo.");
         }
         return target;
+    }
+
+    protected UserEntity getLogedUserEntity() throws BusinessRuleException {
+        String userIdLoged = getLogedUserId();
+        Optional<UserEntity> userLoged = userRepository.findById(userIdLoged);
+        if(userLoged.isPresent()){
+            return userLoged.get();
+        }else {
+            throw new BusinessRuleException("Ninguém logado");
+        }
     }
 
     protected UserEntity getUserById(String id) throws BusinessRuleException {

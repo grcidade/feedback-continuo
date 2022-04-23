@@ -3,20 +3,19 @@ package br.com.dbc.vimserdev.feedbackcontinuo.services;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCompleteDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackDTO;
-import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.FeedbackEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.TagEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
-import br.com.dbc.vimserdev.feedbackcontinuo.enums.Tags;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.FeedbackRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class FeedbackService {
     private final ObjectMapper mapper;
 
     public FeedbackDTO create(FeedbackCreateDTO createDTO) throws BusinessRuleException {
-        UserEntity user = userService.getLoged();
+        UserEntity user = userService.getLogedUserEntity();
 
         UserEntity received = userService.getReceveidUser(createDTO.getFeedbackUserId());
 
@@ -59,7 +58,7 @@ public class FeedbackService {
     }
 
     public List<FeedbackCompleteDTO> getReceivedFeedbacks() throws BusinessRuleException {
-        UserEntity user = userService.getLoged();
+        UserEntity user = userService.getLogedUserEntity();
 
         return user.getFeedbackEntities().stream()
                 .map(feedback -> {
@@ -94,7 +93,7 @@ public class FeedbackService {
     }
 
     public List<FeedbackCompleteDTO> getGivedFeedbacks() throws BusinessRuleException {
-        UserEntity user = userService.getLoged();
+        UserEntity user = userService.getLogedUserEntity();
 
         return user.getFeedbacksGiven().stream()
                 .map(feedback -> {

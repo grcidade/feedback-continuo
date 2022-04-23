@@ -29,9 +29,9 @@ public class UserController {
         return userService.getLogedUser();
     }
 
-    @GetMapping("/list-all-users")
+    @GetMapping("/list-all-users-without-loged")
     public List<UserDTO> getAllUsers(){
-        return userService.getAllUsers();
+        return userService.getAllUsersExceptLogedUser();
     }
 
 }
