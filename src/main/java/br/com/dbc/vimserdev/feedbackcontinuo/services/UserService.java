@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,9 @@ public class UserService {
     public UserDTO create(UserCreateDTO userCreateDTO) throws BusinessRuleException {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BusinessRuleException("Email inválido ou já existente.");
+        }
+        if(!isValidPassword(userCreateDTO.getPassword())){
+            throw new BusinessRuleException("Senha inválida");
         }
 
         if (userCreateDTO.getProfileImage() == null) {
@@ -94,5 +99,22 @@ public class UserService {
     private boolean isValidEmail(String email) {
         String[] partitioned = email.split("@");
         return partitioned[1].equals("dbccompany.com.br");
+    }
+
+    private boolean isValidPassword(String password) {
+
+        // Tamanho: Min 8 - Max 20;
+        // 1 letra minúscula;
+        // 1 letra maiúscula;
+        // 1 caracter especial;
+        // 1 digito;
+        Pattern regexToValidThePassword = Pattern.compile("^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$");
+
+        Matcher testPasswordWithRegex = regexToValidThePassword.matcher(password);
+
+        return testPasswordWithRegex.matches();
     }
 }
