@@ -6,10 +6,9 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.FeedbackService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/feedback")
@@ -25,12 +24,12 @@ public class FeedbackController {
     }
 
     @GetMapping("/receveid")
-    public List<FeedbackCompleteDTO> getReceveidFeedbacks() throws BusinessRuleException {
-        return feedbackService.getReceivedFeedbacks();
+    public Page<FeedbackCompleteDTO> getReceveidFeedbacks(@RequestParam Integer page) throws BusinessRuleException {
+        return feedbackService.getReceivedFeedbacks(page);
     }
 
     @GetMapping("/gived")
-    public List<FeedbackCompleteDTO> getGivedFeedbacks() throws BusinessRuleException {
-        return feedbackService.getGivedFeedbacks();
+    public Page<FeedbackCompleteDTO> getGivedFeedbacks(@RequestParam Integer page) throws BusinessRuleException {
+        return feedbackService.getGivedFeedbacks(page);
     }
 }
