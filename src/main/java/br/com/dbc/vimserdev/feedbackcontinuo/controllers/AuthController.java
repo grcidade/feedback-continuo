@@ -7,6 +7,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.security.TokenService;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +40,7 @@ public class AuthController {
 
         Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         String token = tokenService.getToken(authenticate);
-        return ResponseEntity.ok(token);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
 

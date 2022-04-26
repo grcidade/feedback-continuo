@@ -4,9 +4,10 @@ import java.util.Collections;
 import java.util.Date;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class TokenService {
         return PREFIX + token;
     }
 
-    public Authentication getAuthentication(HttpServletRequest request) {
+    public Authentication getAuthentication(HttpServletRequest request) throws BusinessRuleException {
         String tokenBearer = request.getHeader(HEADER_AUTHORIZATION); // Bearer hfUIfs
 
         if (tokenBearer != null) {

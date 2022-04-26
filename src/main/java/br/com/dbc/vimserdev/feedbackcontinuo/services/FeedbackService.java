@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,7 @@ public class FeedbackService {
     public FeedbackDTO create(FeedbackCreateDTO createDTO) throws BusinessRuleException {
         UserEntity user = userService.getLogedUserEntity();
 
-        UserEntity received = userService.getReceveidUser(createDTO.getFeedbackUserId());
+        UserEntity received = userService.getUserById(createDTO.getFeedbackUserId());
 
         if (createDTO.getIsAnonymous() == null) {
             createDTO.setIsAnonymous(false);

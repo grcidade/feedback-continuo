@@ -43,9 +43,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                                                   HttpServletRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("status", exception.statusCode.value());
         body.put("message", exception.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, exception.statusCode);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

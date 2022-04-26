@@ -7,6 +7,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,10 +28,10 @@ public class UserService {
 
     public UserDTO create(UserCreateDTO userCreateDTO) throws BusinessRuleException {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
-            throw new BusinessRuleException("Email inválido ou já existente.");
+            throw new BusinessRuleException("Email inválido ou já existente.", HttpStatus.UNAUTHORIZED);
         }
         if(!isValidPassword(userCreateDTO.getPassword())){
-            throw new BusinessRuleException("Senha inválida");
+            throw new BusinessRuleException("Senha inválida", HttpStatus.BAD_REQUEST);
         }
 
         if (userCreateDTO.getProfileImage() == null) {
@@ -69,17 +70,8 @@ public class UserService {
         if(userLoged.isPresent()){
             return userLoged.get();
         }else {
-            throw new BusinessRuleException("Ninguém logado");
+            return null;
         }
-    }
-
-    protected UserEntity getReceveidUser(String id) throws BusinessRuleException {
-        UserEntity loged = getLogedUserEntity();
-        UserEntity target = userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não econtrado"));
-        if (loged.equals(target)) {
-            throw new BusinessRuleException("Não é possível atribuir feedbacks a si mesmo.");
-        }
-        return target;
     }
 
     protected UserEntity getLogedUserEntity() throws BusinessRuleException {
@@ -88,12 +80,12 @@ public class UserService {
         if(userLoged.isPresent()){
             return userLoged.get();
         }else {
-            throw new BusinessRuleException("Ninguém logado");
+            return null;
         }
     }
 
     protected UserEntity getUserById(String id) throws BusinessRuleException {
-        return userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Id inválido"));
+        return userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não encontrado", HttpStatus.NOT_FOUND));
     }
 
     private boolean isValidEmail(String email) {

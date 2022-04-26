@@ -4,6 +4,8 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,18 +22,18 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/loged-user-id")
-    public String getLogedUserId(){
-        return userService.getLogedUserId();
+    public ResponseEntity<String> getLogedUserId(){
+        return new ResponseEntity<>(userService.getLogedUserId(), HttpStatus.OK);
     }
 
     @GetMapping("/user-loged")
-    public UserDTO getLogedUser() throws BusinessRuleException {
-        return userService.getLogedUser();
+    public ResponseEntity<UserDTO> getLogedUser() throws BusinessRuleException {
+        return new ResponseEntity<>(userService.getLogedUser(), HttpStatus.OK);
     }
 
     @GetMapping("/list-all-users-without-loged")
-    public List<UserDTO> getAllUsers(){
-        return userService.getAllUsersExceptLogedUser();
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
+        return new ResponseEntity<>(userService.getAllUsersExceptLogedUser(), HttpStatus.OK);
     }
 
 }

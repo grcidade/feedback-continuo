@@ -3,6 +3,8 @@ package br.com.dbc.vimserdev.feedbackcontinuo.controllers;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.TagDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +21,8 @@ public class TagController {
     private final TagService tagService;
 
     @GetMapping
-    public List<TagDTO> getAllTags() {
-        return tagService.getAllTags();
+    public ResponseEntity<List<TagDTO>> getAllTags() {
+        return new ResponseEntity<>(tagService.getAllTags(), HttpStatus.OK);
     }
 
 }

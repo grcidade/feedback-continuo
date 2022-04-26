@@ -7,6 +7,8 @@ import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +21,18 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping
-    public FeedbackDTO create(@RequestBody FeedbackCreateDTO createDTO) throws BusinessRuleException {
-        return feedbackService.create(createDTO);
+    public ResponseEntity<FeedbackDTO> create(@RequestBody FeedbackCreateDTO createDTO) throws BusinessRuleException {
+        FeedbackDTO created = feedbackService.create(createDTO);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping("/receveid")
-    public Page<FeedbackCompleteDTO> getReceveidFeedbacks(@RequestParam Integer page) throws BusinessRuleException {
-        return feedbackService.getReceivedFeedbacks(page);
+    public ResponseEntity<Page<FeedbackCompleteDTO>> getReceveidFeedbacks(@RequestParam Integer page) throws BusinessRuleException {
+        return new ResponseEntity<>(feedbackService.getReceivedFeedbacks(page), HttpStatus.OK);
     }
 
     @GetMapping("/gived")
-    public Page<FeedbackCompleteDTO> getGivedFeedbacks(@RequestParam Integer page) throws BusinessRuleException {
-        return feedbackService.getGivedFeedbacks(page);
+    public ResponseEntity<Page<FeedbackCompleteDTO>> getGivedFeedbacks(@RequestParam Integer page) throws BusinessRuleException {
+        return new ResponseEntity<>(feedbackService.getGivedFeedbacks(page), HttpStatus.OK);
     }
 }
