@@ -26,12 +26,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final ObjectMapper mapper;
 
-    public UserDTO create(UserCreateDTO userCreateDTO) throws BusinessRuleException {
+    public void create(UserCreateDTO userCreateDTO) throws BusinessRuleException {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BusinessRuleException("Email inválido ou já existente.", HttpStatus.UNAUTHORIZED);
         }
         if(!isValidPassword(userCreateDTO.getPassword())){
-            throw new BusinessRuleException("Senha inválida", HttpStatus.BAD_REQUEST);
+            throw new BusinessRuleException("Senha fraca demais", HttpStatus.BAD_REQUEST);
         }
 
         if (userCreateDTO.getProfileImage() == null) {
@@ -44,7 +44,7 @@ public class UserService {
 
         UserEntity created = userRepository.save(entity);
 
-        return mapper.convertValue(created, UserDTO.class);
+        mapper.convertValue(created, UserDTO.class);
     }
 
     public Optional<UserEntity> findByEmail(String email) {
@@ -64,24 +64,34 @@ public class UserService {
                 .stream().map(userEntitiy -> mapper.convertValue(userEntitiy, UserDTO.class)).toList();
     }
 
-    public UserDTO getLogedUser() throws BusinessRuleException {
+    public UserDTO getLogedUser() {
         String userIdLoged = getLogedUserId();
         Optional<UserDTO> userLoged = userRepository.findById(userIdLoged).map(userEntity -> mapper.convertValue(userEntity, UserDTO.class));
-        if(userLoged.isPresent()){
-            return userLoged.get();
-        }else {
-            return null;
-        }
+        return userLoged.orElse(null);
     }
 
-    protected UserEntity getLogedUserEntity() throws BusinessRuleException {
+    public void changePasswordUserLoged(String newPassword) throws BusinessRuleException {
+        if(!isValidPassword(newPassword)){
+            throw new BusinessRuleException("Senha fraca demais", HttpStatus.BAD_REQUEST);
+        }
+        UserEntity userToUpdate = getLogedUserEntity();
+        if(new BCryptPasswordEncoder().matches(newPassword, userToUpdate.getPassword())){
+            throw new BusinessRuleException("Essa já é sua senha atual!", HttpStatus.BAD_REQUEST);
+        }
+        userToUpdate.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userRepository.save(userToUpdate);
+    }
+
+    public void changeProfileImageUserLoged(String newProfileImage) {
+        UserEntity userToUpdate = getLogedUserEntity();
+        userToUpdate.setProfileImage(newProfileImage);
+        userRepository.save(userToUpdate);
+    }
+
+    protected UserEntity getLogedUserEntity() {
         String userIdLoged = getLogedUserId();
         Optional<UserEntity> userLoged = userRepository.findById(userIdLoged);
-        if(userLoged.isPresent()){
-            return userLoged.get();
-        }else {
-            return null;
-        }
+        return userLoged.orElse(null);
     }
 
     protected UserEntity getUserById(String id) throws BusinessRuleException {

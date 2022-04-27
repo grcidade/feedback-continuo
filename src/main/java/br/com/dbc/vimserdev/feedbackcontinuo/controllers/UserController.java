@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,13 +25,25 @@ public class UserController {
     }
 
     @GetMapping("/user-loged")
-    public ResponseEntity<UserDTO> getLogedUser() throws BusinessRuleException {
+    public ResponseEntity<UserDTO> getLogedUser() {
         return new ResponseEntity<>(userService.getLogedUser(), HttpStatus.OK);
     }
 
     @GetMapping("/list-all-users-without-loged")
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         return new ResponseEntity<>(userService.getAllUsersExceptLogedUser(), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<String> updatePasswordUserLoged(@RequestParam String newPassword) throws BusinessRuleException {
+        userService.changePasswordUserLoged(newPassword);
+        return new ResponseEntity<>("Senha alterada com sucesso!", HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping("/update-profile-image")
+    public ResponseEntity<String> updateProfileImageUserLoged(@RequestParam String newProfileImage) {
+        userService.changeProfileImageUserLoged(newProfileImage);
+        return new ResponseEntity<>("Imagem alterada com sucesso!", HttpStatus.ACCEPTED);
     }
 
 }

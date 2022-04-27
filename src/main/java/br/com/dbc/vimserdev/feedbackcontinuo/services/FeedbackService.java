@@ -58,7 +58,7 @@ public class FeedbackService {
         return createdDTO;
     }
 
-    public Page<FeedbackCompleteDTO> getReceivedFeedbacks(Integer page) throws BusinessRuleException {
+    public Page<FeedbackCompleteDTO> getReceivedFeedbacks(Integer page) {
         // TODO - trocar pelo getUserId quando arrumar
         UserEntity user = userService.getLogedUserEntity();
 
@@ -89,7 +89,7 @@ public class FeedbackService {
                 });
     }
 
-    public Page<FeedbackCompleteDTO> getGivedFeedbacks(Integer page) throws BusinessRuleException {
+    public Page<FeedbackCompleteDTO> getGivedFeedbacks(Integer page) {
         UserEntity user = userService.getLogedUserEntity();
 
         Pageable pageable = PageRequest.of(page, 5, Sort.Direction.DESC, "createdAt");
