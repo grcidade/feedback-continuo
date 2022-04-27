@@ -1,8 +1,10 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.controllers;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UpdateUserImageProfileDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +43,8 @@ public class UserController {
     }
 
     @PutMapping("/update-profile-image")
-    public ResponseEntity<String> updateProfileImageUserLoged(@RequestParam String newProfileImage) {
-        userService.changeProfileImageUserLoged(newProfileImage);
+    public ResponseEntity<String> updateProfileImageUserLoged(@RequestBody String imageProfileDTO) {
+        userService.changeProfileImageUserLoged(imageProfileDTO);
         return new ResponseEntity<>("Imagem alterada com sucesso!", HttpStatus.ACCEPTED);
     }
 

@@ -1,5 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UpdateUserImageProfileDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
@@ -83,9 +84,12 @@ public class UserService {
     }
 
     public void changeProfileImageUserLoged(String newProfileImage) {
-        UserEntity userToUpdate = getLogedUserEntity();
-        userToUpdate.setProfileImage(newProfileImage);
-        userRepository.save(userToUpdate);
+        Optional<UserEntity> userToUpdate = userRepository.findById(getLogedUserId());
+        if (userToUpdate.isPresent()) {
+        	UserEntity user = userToUpdate.get();
+        	user.setProfileImage(newProfileImage);
+        	userRepository.save(user);
+        }
     }
 
     protected UserEntity getLogedUserEntity() {
