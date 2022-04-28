@@ -105,7 +105,7 @@ public class FeedbackService {
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
                                 .userName(gived.getName())
-                                .profileUserImage(Base64.getEncoder().encodeToString(gived.getProfileImage()))
+                                .profileUserImage(gived.getProfileImage()!=null?Base64.getEncoder().encodeToString(gived.getProfileImage()):null)
                                 .message(feedback.getMessage())
                                 .tags(getTags(feedback.getTags()))
                                 .createdAt(feedback.getCreatedAt())
