@@ -5,6 +5,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.FeedbackService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping
-    public ResponseEntity<FeedbackDTO> create(@RequestBody FeedbackCreateDTO createDTO) throws BusinessRuleException {
+    public ResponseEntity<FeedbackDTO> create(@RequestBody FeedbackCreateDTO createDTO) throws BusinessRuleException, JsonProcessingException {
         FeedbackDTO created = feedbackService.create(createDTO);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }

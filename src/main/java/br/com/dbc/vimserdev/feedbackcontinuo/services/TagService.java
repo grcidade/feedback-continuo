@@ -18,10 +18,6 @@ public class TagService {
     private final TagRepository tagRepository;
     private final ObjectMapper mapper;
 
-    protected void create(Tags tag) {
-        TagEntity created = tagRepository.save(TagEntity.builder().name(tag.getName()).build());
-    }
-
     public List<TagDTO> getAllTags() {
         return tagRepository.findAll().stream().map(tag -> mapper.convertValue(tag, TagDTO.class)).toList();
     }

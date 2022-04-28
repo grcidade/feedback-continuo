@@ -51,7 +51,7 @@ public class FeedbackService {
 
         FeedbackEntity created = feedbackRepository.save(entity);
 
-        // kafka
+//        // kafka
         String to = userService.getUserById(created.getFeedbackUserId()).getEmail();
         String from = userService.getUserById(created.getUserId()).getEmail();
 
