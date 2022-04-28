@@ -1,5 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.EmailHandlerDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCompleteDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackDTO;
@@ -8,6 +9,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.entities.TagEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.FeedbackRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -24,10 +26,11 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final UserService userService;
+    private final KafkaProducerService kafkaProducerService;
     private final TagService tagService;
     private final ObjectMapper mapper;
 
-    public FeedbackDTO create(FeedbackCreateDTO createDTO) throws BusinessRuleException {
+    public FeedbackDTO create(FeedbackCreateDTO createDTO) throws BusinessRuleException, JsonProcessingException {
         UserEntity user = userService.getLogedUserEntity();
 
         UserEntity received = userService.getUserById(createDTO.getFeedbackUserId());
@@ -50,6 +53,17 @@ public class FeedbackService {
         entity.setTags(tags);
 
         FeedbackEntity created = feedbackRepository.save(entity);
+
+        // kafka
+        String to = userService.getUserById(created.getFeedbackUserId()).getEmail();
+        String from = userService.getUserById(created.getUserId()).getEmail();
+
+        EmailHandlerDTO handler = EmailHandlerDTO.builder()
+                .to(to)
+                .from(from)
+                .build();
+
+        kafkaProducerService.send(handler);
 
         FeedbackDTO createdDTO = mapper.convertValue(created, FeedbackDTO.class);
         createdDTO.setUserId(user.getUserId());
