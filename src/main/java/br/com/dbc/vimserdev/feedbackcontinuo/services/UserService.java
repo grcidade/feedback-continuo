@@ -1,20 +1,23 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
-import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UpdateUserImageProfileDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -25,9 +28,8 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ObjectMapper mapper;
 
-    public void create(UserCreateDTO userCreateDTO) throws BusinessRuleException {
+    public void create(UserCreateDTO userCreateDTO, MultipartFile profileImage) throws BusinessRuleException {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BusinessRuleException("Email inválido ou já existente.", HttpStatus.UNAUTHORIZED);
         }
@@ -35,17 +37,13 @@ public class UserService {
             throw new BusinessRuleException("Senha fraca demais", HttpStatus.BAD_REQUEST);
         }
 
-        if (userCreateDTO.getProfileImage() == null) {
-            UserEntity anonymous = getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
-            userCreateDTO.setProfileImage(anonymous.getProfileImage());
-        }
+        UserEntity userCreated = UserEntity.builder()
+                .name(userCreateDTO.getName())
+                .email(userCreateDTO.getEmail())
+                .password(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()))
+                .profileImage(profileImage!=null?convertImageToByte(profileImage):null).build();
 
-        UserEntity entity = mapper.convertValue(userCreateDTO, UserEntity.class);
-        entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
-
-        UserEntity created = userRepository.save(entity);
-
-        mapper.convertValue(created, UserDTO.class);
+        userRepository.save(userCreated);
     }
 
     public Optional<UserEntity> findByEmail(String email) {
@@ -61,13 +59,13 @@ public class UserService {
     }
 
     public List<UserDTO> getAllUsersExceptLogedUser(){
-        return userRepository.findAllByUserIdIsNotAndUserIdIsNot(getLogedUserId(), "aadebf96-ea3c-4719-b6d2-f38f50ab9cf6")
-                .stream().map(userEntitiy -> mapper.convertValue(userEntitiy, UserDTO.class)).toList();
+        return userRepository.findAllByUserIdIsNot(getLogedUserId())
+                .stream().map(this::buildUserDTO).toList();
     }
 
     public UserDTO getLogedUser() {
         String userIdLoged = getLogedUserId();
-        Optional<UserDTO> userLoged = userRepository.findById(userIdLoged).map(userEntity -> mapper.convertValue(userEntity, UserDTO.class));
+        Optional<UserDTO> userLoged = userRepository.findById(userIdLoged).map(this::buildUserDTO);
         return userLoged.orElse(null);
     }
 
@@ -83,13 +81,10 @@ public class UserService {
         userRepository.save(userToUpdate);
     }
 
-    public void changeProfileImageUserLoged(String newProfileImage) {
-        Optional<UserEntity> userToUpdate = userRepository.findById(getLogedUserId());
-        if (userToUpdate.isPresent()) {
-        	UserEntity user = userToUpdate.get();
-        	user.setProfileImage(newProfileImage);
-        	userRepository.save(user);
-        }
+    public void changeProfileImageUserLoged(MultipartFile newProfileImage) throws BusinessRuleException {
+        UserEntity userToUpdate = userRepository.getById(getLogedUserId());
+        userToUpdate.setProfileImage(convertImageToByte(newProfileImage));
+        userRepository.save(userToUpdate);
     }
 
     protected UserEntity getLogedUserEntity() {
@@ -100,6 +95,26 @@ public class UserService {
 
     protected UserEntity getUserById(String id) throws BusinessRuleException {
         return userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não encontrado", HttpStatus.NOT_FOUND));
+    }
+
+    private UserDTO buildUserDTO(UserEntity userToTransform){
+        return UserDTO.builder()
+                .userId(userToTransform.getUserId())
+                .email(userToTransform.getEmail())
+                .name(userToTransform.getName())
+                .profileImage(userToTransform.getProfileImage()!=null? Base64.getEncoder().encodeToString(userToTransform.getProfileImage()):null).build();
+    }
+
+    private byte[] convertImageToByte(MultipartFile profileImage) throws BusinessRuleException {
+        try {
+            String fileExtension = FilenameUtils.getExtension(profileImage.getOriginalFilename());
+            if (!Arrays.asList("jpg", "jpeg", "png").contains(fileExtension)) {
+                throw new BusinessRuleException("Tipo de arquivo não suportado", HttpStatus.NOT_ACCEPTABLE);
+            }
+            return profileImage.getBytes();
+        }catch (IOException e){
+            throw new BusinessRuleException("Erro ao salvar imagem", HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
     private boolean isValidEmail(String email) {
