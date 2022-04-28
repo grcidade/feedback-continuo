@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     Optional<UserEntity> findByEmail(String email);
-    List<UserEntity> findAllByUserIdIsNotAndUserIdIsNot(String userId, String userid);
+    List<UserEntity> findAllByUserIdIsNot(String userId);
 }
