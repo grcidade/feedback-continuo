@@ -1,8 +1,12 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.dtos;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
 
     private String userId;

@@ -13,12 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,9 +44,9 @@ public class AuthController {
     }
 
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<String> register(@RequestBody @Valid UserCreateDTO userCreateDTO) throws BusinessRuleException {
-        userService.create(userCreateDTO);
+    @PostMapping(path = "/sign-up", consumes = {MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> register(@Valid @ModelAttribute UserCreateDTO userCreateDTO, @RequestPart(required = false) MultipartFile profileImage) throws BusinessRuleException {
+        userService.create(userCreateDTO, profileImage);
         LoginDTO login = new LoginDTO();
         login.setEmail(userCreateDTO.getEmail());
         login.setPassword(userCreateDTO.getPassword());

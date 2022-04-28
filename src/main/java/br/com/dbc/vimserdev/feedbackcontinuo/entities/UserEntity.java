@@ -32,7 +32,7 @@ public class UserEntity implements UserDetails {
     private String password;
 
     @Column(name = "profile_image")
-    private String profileImage;
+    private byte[] profileImage;
 
     @JsonIgnore
     @OneToMany(mappedBy = "feedbackEntityGiven", cascade = CascadeType.ALL, orphanRemoval = true)

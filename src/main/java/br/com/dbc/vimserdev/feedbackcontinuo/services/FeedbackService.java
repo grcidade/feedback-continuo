@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +70,6 @@ public class FeedbackService {
     }
 
     public Page<FeedbackCompleteDTO> getReceivedFeedbacks(Integer page) {
-        // TODO - trocar pelo getUserId quando arrumar
         UserEntity user = userService.getLogedUserEntity();
 
         Pageable pageable = PageRequest.of(page, 5, Sort.Direction.DESC, "createdAt");
@@ -82,17 +78,10 @@ public class FeedbackService {
                 .map(feedback -> {
                     try {
                         UserEntity gived = userService.getUserById(feedback.getUserId());
-
-                        if (feedback.getIsAnonymous()) {
-                            UserEntity anonymous = userService.getUserById("aadebf96-ea3c-4719-b6d2-f38f50ab9cf6");
-                            gived.setName(anonymous.getName());
-                            gived.setProfileImage(anonymous.getProfileImage());
-                        }
-
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
-                                .userName(gived.getName())
-                                .profileUserImage(gived.getProfileImage())
+                                .userName(feedback.getIsAnonymous()?"Anônimo":gived.getName())
+                                .profileUserImage(feedback.getIsAnonymous()?null: Base64.getEncoder().encodeToString(gived.getProfileImage()))
                                 .message(feedback.getMessage())
                                 .tags(getTags(feedback.getTags()))
                                 .createdAt(feedback.getCreatedAt())
@@ -112,12 +101,11 @@ public class FeedbackService {
                 .map(feedback -> {
                     try {
                         UserEntity gived = userService.getUserById(feedback.getFeedbackUserId());
-                        // TODO - arrumar essa monstruosidade
 
                         return FeedbackCompleteDTO.builder()
                                 .feedbackId(feedback.getFeedbackId())
                                 .userName(gived.getName())
-                                .profileUserImage(gived.getProfileImage())
+                                .profileUserImage(Base64.getEncoder().encodeToString(gived.getProfileImage()))
                                 .message(feedback.getMessage())
                                 .tags(getTags(feedback.getTags()))
                                 .createdAt(feedback.getCreatedAt())

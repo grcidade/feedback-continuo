@@ -14,7 +14,6 @@ public class UserCreateDTO {
     @Email
     private String email;
     @NotEmpty
-//    @Size(min = 8, max = 20)
     private String password;
-    private String profileImage;
+
 }

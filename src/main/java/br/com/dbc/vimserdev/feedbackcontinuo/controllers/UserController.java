@@ -1,17 +1,18 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.controllers;
 
-import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UpdateUserImageProfileDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/user")
@@ -42,9 +43,9 @@ public class UserController {
         return new ResponseEntity<>("Senha alterada com sucesso!", HttpStatus.ACCEPTED);
     }
 
-    @PutMapping("/update-profile-image")
-    public ResponseEntity<String> updateProfileImageUserLoged(@RequestBody String imageProfileDTO) {
-        userService.changeProfileImageUserLoged(imageProfileDTO);
+    @PutMapping(value = "/update-profile-image", consumes = {MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> updateProfileImageUserLoged(@RequestPart MultipartFile profileImage) throws BusinessRuleException {
+        userService.changeProfileImageUserLoged(profileImage);
         return new ResponseEntity<>("Imagem alterada com sucesso!", HttpStatus.ACCEPTED);
     }
 
