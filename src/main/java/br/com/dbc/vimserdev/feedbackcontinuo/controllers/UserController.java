@@ -38,8 +38,9 @@ public class UserController {
     }
 
     @PutMapping("/update-password")
-    public ResponseEntity<String> updatePasswordUserLoged(@RequestParam String newPassword) throws BusinessRuleException {
-        userService.changePasswordUserLoged(newPassword);
+    public ResponseEntity<String> updatePasswordUserLoged(@RequestParam String oldPassword,
+                                                          @RequestParam String newPassword) throws BusinessRuleException {
+        userService.changePasswordUserLoged(oldPassword, newPassword);
         return new ResponseEntity<>("Senha alterada com sucesso!", HttpStatus.ACCEPTED);
     }
 

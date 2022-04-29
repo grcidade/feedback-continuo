@@ -1,13 +1,17 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.dtos;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.enums.Tags;
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class FeedbackCreateDTO {
 
     @NotEmpty

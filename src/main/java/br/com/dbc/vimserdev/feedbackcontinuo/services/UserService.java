@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
@@ -33,17 +32,18 @@ public class UserService {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
             throw new BusinessRuleException("Email inválido ou já existente.", HttpStatus.UNAUTHORIZED);
         }
+
         if(!isValidPassword(userCreateDTO.getPassword())){
-            throw new BusinessRuleException("Senha fraca demais", HttpStatus.BAD_REQUEST);
+            throw new BusinessRuleException("Senha fraca demais.", HttpStatus.BAD_REQUEST);
         }
 
-        UserEntity userCreated = UserEntity.builder()
+        UserEntity created = UserEntity.builder()
                 .name(userCreateDTO.getName())
                 .email(userCreateDTO.getEmail())
                 .password(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()))
-                .profileImage(profileImage!=null?convertImageToByte(profileImage):null).build();
+                .profileImage(profileImage != null ? convertImageToByte(profileImage) : null).build();
 
-        userRepository.save(userCreated);
+        userRepository.save(created);
     }
 
     public Optional<UserEntity> findByEmail(String email) {
@@ -69,14 +69,21 @@ public class UserService {
         return userLoged.orElse(null);
     }
 
-    public void changePasswordUserLoged(String newPassword) throws BusinessRuleException {
+    public void changePasswordUserLoged(String oldPassword, String newPassword) throws BusinessRuleException {
+        UserEntity userToUpdate = getLogedUserEntity();
+
+        if (!new BCryptPasswordEncoder().matches(oldPassword, userToUpdate.getPassword())) {
+            throw new BusinessRuleException("Senha antiga incompatível.", HttpStatus.UNAUTHORIZED);
+        }
+
         if(!isValidPassword(newPassword)){
             throw new BusinessRuleException("Senha fraca demais", HttpStatus.BAD_REQUEST);
         }
-        UserEntity userToUpdate = getLogedUserEntity();
+
         if(new BCryptPasswordEncoder().matches(newPassword, userToUpdate.getPassword())){
             throw new BusinessRuleException("Essa já é sua senha atual!", HttpStatus.BAD_REQUEST);
         }
+
         userToUpdate.setPassword(new BCryptPasswordEncoder().encode(newPassword));
         userRepository.save(userToUpdate);
     }
@@ -87,10 +94,8 @@ public class UserService {
         userRepository.save(userToUpdate);
     }
 
-    protected UserEntity getLogedUserEntity() {
-        String userIdLoged = getLogedUserId();
-        Optional<UserEntity> userLoged = userRepository.findById(userIdLoged);
-        return userLoged.orElse(null);
+    protected UserEntity getLogedUserEntity() throws BusinessRuleException {
+        return userRepository.findById(getLogedUserId()).orElseThrow(() -> new BusinessRuleException("Erro inesperado.", HttpStatus.BAD_REQUEST));
     }
 
     protected UserEntity getUserById(String id) throws BusinessRuleException {
@@ -102,7 +107,7 @@ public class UserService {
                 .userId(userToTransform.getUserId())
                 .email(userToTransform.getEmail())
                 .name(userToTransform.getName())
-                .profileImage(userToTransform.getProfileImage()!=null? Base64.getEncoder().encodeToString(userToTransform.getProfileImage()):null).build();
+                .profileImage(userToTransform.getProfileImage() != null ? Base64.getEncoder().encodeToString(userToTransform.getProfileImage()) : null).build();
     }
 
     private byte[] convertImageToByte(MultipartFile profileImage) throws BusinessRuleException {
@@ -123,7 +128,6 @@ public class UserService {
     }
 
     private boolean isValidPassword(String password) {
-
         // Tamanho: Min 8 - Max 20;
         // 1 letra minúscula;
         // 1 letra maiúscula;
@@ -134,8 +138,6 @@ public class UserService {
                 + "(?=.*[@#$%^&+=])"
                 + "(?=\\S+$).{8,20}$");
 
-        Matcher testPasswordWithRegex = regexToValidThePassword.matcher(password);
-
-        return testPasswordWithRegex.matches();
+        return regexToValidThePassword.matcher(password).matches();
     }
 }

@@ -1,8 +1,11 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.dtos;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class FeedbackDTO extends FeedbackCreateDTO {
 
     private String feedbackId;
