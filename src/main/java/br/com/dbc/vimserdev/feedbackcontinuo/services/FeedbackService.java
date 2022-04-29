@@ -58,7 +58,7 @@ public class FeedbackService {
         // Kafka
         EmailHandlerDTO emailHandlerDTO = EmailHandlerDTO.builder()
                 .to(received.getEmail())
-                .from(user.getEmail())
+                .from(user.getName())
                 .build();
 
         kafkaProducerService.send(emailHandlerDTO);
