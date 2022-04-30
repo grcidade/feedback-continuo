@@ -1,4 +1,4 @@
-package br.com.dbc.vimserdev.feedbackcontinuo;
+package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
