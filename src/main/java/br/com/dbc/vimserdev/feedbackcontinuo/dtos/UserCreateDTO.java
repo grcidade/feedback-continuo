@@ -1,11 +1,15 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.dtos;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-@Data
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserCreateDTO {
 
     @NotEmpty
