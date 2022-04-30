@@ -4,6 +4,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCompleteDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.FeedbackDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
+import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.FeedbackAPI;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.FeedbackService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/feedback")
 @Validated
 @RequiredArgsConstructor
-public class FeedbackController {
+public class FeedbackController implements FeedbackAPI {
 
     private final FeedbackService feedbackService;
 

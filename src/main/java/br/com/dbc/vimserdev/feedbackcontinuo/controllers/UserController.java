@@ -2,6 +2,7 @@ package br.com.dbc.vimserdev.feedbackcontinuo.controllers;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
+import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.UserAPI;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,12 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("/user")
 @Validated
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserAPI {
 
     private final UserService userService;
 
     @GetMapping("/loged-user-id")
-    public ResponseEntity<String> getLogedUserId(){
+    public ResponseEntity<String> getLogedUserId() {
         return new ResponseEntity<>(userService.getLogedUserId(), HttpStatus.OK);
     }
 

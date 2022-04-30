@@ -4,6 +4,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.LoginDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
+import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.AuthAPI;
 import br.com.dbc.vimserdev.feedbackcontinuo.security.TokenService;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +26,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Validated
-public class AuthController {
+public class AuthController implements AuthAPI {
 
     private final UserService userService;
     private final AuthenticationManager authenticationManager;

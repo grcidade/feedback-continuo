@@ -1,6 +1,7 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.controllers;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.TagDTO;
+import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.TagAPI;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tag")
-@Validated
 @RequiredArgsConstructor
-public class TagController {
+public class TagController implements TagAPI {
 
     private final TagService tagService;
 
