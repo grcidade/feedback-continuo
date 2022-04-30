@@ -20,7 +20,7 @@ import java.util.UUID;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaProducerService {
+public class EmailHandlerProducerService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper mapper;

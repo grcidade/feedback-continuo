@@ -24,7 +24,7 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final UserService userService;
-    private final KafkaProducerService kafkaProducerService;
+    private final EmailHandlerProducerService emailHandlerProducerService;
     private final TagService tagService;
     private final ObjectMapper mapper;
 
@@ -61,7 +61,7 @@ public class FeedbackService {
                 .from(user.getName())
                 .build();
 
-        kafkaProducerService.send(emailHandlerDTO);
+        emailHandlerProducerService.send(emailHandlerDTO);
 
         FeedbackDTO createdDTO = mapper.convertValue(created, FeedbackDTO.class);
         createdDTO.setUserId(user.getUserId());

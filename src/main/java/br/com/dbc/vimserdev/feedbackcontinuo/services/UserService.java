@@ -1,10 +1,12 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ForgotPasswordHandlerDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -27,6 +26,7 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ForgotPasswordHandlerProducerService handlerProducerService;
 
     public void create(UserCreateDTO userCreateDTO, MultipartFile profileImage) throws BusinessRuleException {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
@@ -92,6 +92,32 @@ public class UserService {
         UserEntity userToUpdate = userRepository.getById(getLogedUserId());
         userToUpdate.setProfileImage(convertImageToByte(newProfileImage));
         userRepository.save(userToUpdate);
+    }
+
+    public void forgotPassword(String email) throws BusinessRuleException, JsonProcessingException {
+        if (!isValidEmail(email)) {
+            throw new BusinessRuleException("Email inválido.", HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<UserEntity> userExists = findByEmail(email);
+
+        if (userExists.isEmpty()) {
+            throw new BusinessRuleException("Usuário não encontrado.", HttpStatus.NOT_FOUND);
+        }
+
+        String code = UUID.randomUUID().toString();
+
+        UserEntity user = userExists.get();
+        user.setPassword(new BCryptPasswordEncoder().encode(code));
+
+        userRepository.save(user);
+
+        ForgotPasswordHandlerDTO handlerDTO = ForgotPasswordHandlerDTO.builder()
+                .to(user.getEmail())
+                .code(code)
+                .build();
+
+        handlerProducerService.send(handlerDTO);
     }
 
     protected UserEntity getLogedUserEntity() throws BusinessRuleException {

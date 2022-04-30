@@ -6,6 +6,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.security.TokenService;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,4 +54,9 @@ public class AuthController {
         return login(login);
     }
 
+    @PostMapping("/forgot-password/{email}")
+    public ResponseEntity<String> forgotPassowrd(@PathVariable("email") String email) throws BusinessRuleException, JsonProcessingException {
+        userService.forgotPassword(email);
+        return new ResponseEntity<>("Foi enviado um código para o seu email.", HttpStatus.OK);
+    }
 }
