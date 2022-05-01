@@ -8,6 +8,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.AuthAPI;
 import br.com.dbc.vimserdev.feedbackcontinuo.security.TokenService;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Validated
+@Api(value = "Auth")
 public class AuthController implements AuthAPI {
 
     private final UserService userService;

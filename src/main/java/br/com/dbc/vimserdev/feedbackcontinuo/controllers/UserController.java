@@ -4,6 +4,7 @@ import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.UserAPI;
 import br.com.dbc.vimserdev.feedbackcontinuo.services.UserService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("/user")
 @Validated
 @RequiredArgsConstructor
+@Api(value = "User")
 public class UserController implements UserAPI {
 
     private final UserService userService;
