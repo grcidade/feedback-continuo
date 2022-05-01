@@ -2,6 +2,7 @@ package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ForgotPasswordHandlerDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.UserEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.repositories.UserRepository;
@@ -17,7 +18,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -243,6 +248,159 @@ public class UserServiceTest {
     public void deveDevolverNullUserLogado(){
         SecurityContextHolder.setContext(securityContext);
         assertNull(userService.getLogedUser());
+    }
+
+    @Test
+    public void deveDevolverUserLogado(){
+
+        UserEntity user = UserEntity.builder()
+                .name("joao")
+                .password("Senha@123")
+                .email("a@dbccompany.com.br").build();
+        UserDTO userPassed = buildUserDTO(user);
+
+        SecurityContextHolder.setContext(securityContext);
+
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
+
+        UserDTO userDTO = userService.getLogedUser();
+
+        assertEquals(userPassed.getUserId(), userDTO.getUserId());
+
+    }
+
+    @Test
+    public void deveTestarTrocarImagem() throws BusinessRuleException {
+
+        SecurityContextHolder.setContext(securityContext);
+
+        UserEntity user = UserEntity.builder()
+                .name("joao")
+                .password("Senha@123")
+                .email("a@dbccompany.com.br").build();
+
+        when(userRepository.getById(anyString())).thenReturn(user);
+
+        userService.changeProfileImageUserLoged(getImagem());
+
+        verify(userRepository,times(1)).save(any(UserEntity.class));
+
+    }
+
+    @Test(expected = BusinessRuleException.class)
+    public void deveDarErroTipoDeArquivoTrocarImagem() throws BusinessRuleException {
+
+        SecurityContextHolder.setContext(securityContext);
+
+        UserEntity user = UserEntity.builder()
+                .name("joao")
+                .password("Senha@123")
+                .email("a@dbccompany.com.br").build();
+
+        when(userRepository.getById(anyString())).thenReturn(user);
+
+        userService.changeProfileImageUserLoged(getImagemRuim());
+
+    }
+
+    private UserDTO buildUserDTO(UserEntity userToTransform){
+        return UserDTO.builder()
+                .userId(userToTransform.getUserId())
+                .email(userToTransform.getEmail())
+                .name(userToTransform.getName())
+                .profileImage(userToTransform.getProfileImage() != null ? Base64.getEncoder().encodeToString(userToTransform.getProfileImage()) : null).build();
+    }
+
+    private MultipartFile getImagem(){
+
+        return new MultipartFile() {
+            @Override
+            public String getName() {
+                return "abd";
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return "abd.jpeg";
+            }
+
+            @Override
+            public String getContentType() {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBytes() {
+                return new byte[0];
+            }
+
+            @Override
+            public InputStream getInputStream() {
+                return null;
+            }
+
+            @Override
+            public void transferTo(File dest) throws IllegalStateException {
+
+            }
+        };
+
+    }
+
+    private MultipartFile getImagemRuim(){
+
+        return new MultipartFile() {
+            @Override
+            public String getName() {
+                return "abd.pdf";
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return "abd.pdf";
+            }
+
+            @Override
+            public String getContentType() {
+                return "pdf";
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBytes() {
+                return new byte[0];
+            }
+
+            @Override
+            public InputStream getInputStream() {
+                return null;
+            }
+
+            @Override
+            public void transferTo(File dest) throws IllegalStateException {
+
+            }
+        };
+
     }
 
 }
