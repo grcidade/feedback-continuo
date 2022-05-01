@@ -1,5 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ChangePasswordDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ForgotPasswordHandlerDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
@@ -54,7 +55,7 @@ public class UserServiceTest {
 
 
     @Test
-    public void deveDarErroEmail() {
+    public void shouldGiveErrorEmail() {
 
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .email("joao@gmail.com")
@@ -68,7 +69,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveDarErroSenha() {
+    public void shouldGiveErrorPassword() {
 
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .email("a@dbccompany.com.br")
@@ -83,7 +84,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveTestarCriacaoUsuario() throws BusinessRuleException {
+    public void shouldTestCreationUser() throws BusinessRuleException {
 
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .email("joao@dbccompany.com.br")
@@ -98,78 +99,99 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveDarErroSenhaIncompativel(){
+    public void shouldGiveErrorPasswordIncompatible(){
 
         UserEntity user = UserEntity.builder()
                 .email("a@dbccompany.com.br")
                 .password(new BCryptPasswordEncoder().encode("Senha@123")).build();
+
+        ChangePasswordDTO passwordDTO = ChangePasswordDTO.builder()
+                .oldPassword("Senha@1")
+                .newPassword("123")
+                .build();
+
 
         SecurityContextHolder.setContext(securityContext);
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         try{
-            userService.changePasswordUserLoged("Senha@1", "123");
+            userService.changePasswordUserLoged(passwordDTO);
         }catch (BusinessRuleException e){
             assertEquals("Senha antiga incompatível.", e.getMessage());
         }
     }
 
     @Test
-    public void deveDarErroSenhaFraca(){
+    public void shouldGiveErrorWeakPassword(){
 
         UserEntity user = UserEntity.builder()
                 .email("a@dbccompany.com.br")
                 .password(new BCryptPasswordEncoder().encode("Senha@123")).build();
+
+        ChangePasswordDTO passwordDTO = ChangePasswordDTO.builder()
+                .oldPassword("Senha@123")
+                .newPassword("123")
+                .build();
 
         SecurityContextHolder.setContext(securityContext);
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         try{
-            userService.changePasswordUserLoged("Senha@123", "123");
+            userService.changePasswordUserLoged(passwordDTO);
         }catch (BusinessRuleException e){
             assertEquals("Senha fraca demais", e.getMessage());
         }
     }
 
     @Test
-    public void deveDarErroSenhaAtualIgual(){
+    public void shouldGiveErrorCurrentPasswordEquals(){
 
         UserEntity user = UserEntity.builder()
                 .email("a@dbccompany.com.br")
                 .password(new BCryptPasswordEncoder().encode("Senha@123")).build();
+
+        ChangePasswordDTO passwordDTO = ChangePasswordDTO.builder()
+                .oldPassword("Senha@123")
+                .newPassword("Senha@123")
+                .build();
 
         SecurityContextHolder.setContext(securityContext);
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         try{
-            userService.changePasswordUserLoged("Senha@123", "Senha@123");
+            userService.changePasswordUserLoged(passwordDTO);
         }catch (BusinessRuleException e){
             assertEquals("Essa já é sua senha atual!", e.getMessage());
         }
     }
 
     @Test
-    public void deveChamarSalvarNoTrocarSenha() throws BusinessRuleException {
+    public void shouldCallSaveInChangePassword() throws BusinessRuleException {
 
         UserEntity user = UserEntity.builder()
                 .email("a@dbccompany.com.br")
                 .password(new BCryptPasswordEncoder().encode("Senha@123")).build();
 
+        ChangePasswordDTO passwordDTO = ChangePasswordDTO.builder()
+                .oldPassword("Senha@123")
+                .newPassword("Senha@12345")
+                .build();
+
         SecurityContextHolder.setContext(securityContext);
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
-        userService.changePasswordUserLoged("Senha@123", "Senha@12345");
+        userService.changePasswordUserLoged(passwordDTO);
 
         verify(userRepository, times(1)).save(user);
 
     }
 
     @Test
-    public void deveDarErroEmailMetodoEsqueciSenha() throws JsonProcessingException {
+    public void shouldGiveErrorEmailMethodForgotPassword() throws JsonProcessingException {
         try{
             userService.forgotPassword("joao@dbccompany.com");
         }catch (BusinessRuleException e){
@@ -178,7 +200,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveDarErroUsuarioNaoEncontradoMetodoEsqueciSenha() throws JsonProcessingException {
+    public void shouldGiveErrorUserNotFoundMethodForgotPassword() throws JsonProcessingException {
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
@@ -190,7 +212,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveChamarSalvarMetodoEsqueciSenha() throws BusinessRuleException, JsonProcessingException {
+    public void shouldCallSaveMethodForgotPassword() throws BusinessRuleException, JsonProcessingException {
 
         UserEntity user = UserEntity.builder()
                 .email("joao@dbccompany.com.br")
@@ -205,7 +227,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveChamarProducerServiceMetodoEsqueciSenha() throws BusinessRuleException, JsonProcessingException {
+    public void shouldCallProducerServiceMethodForgotPassword() throws BusinessRuleException, JsonProcessingException {
 
         UserEntity user = UserEntity.builder()
                 .email("joao@dbccompany.com.br")
@@ -219,13 +241,13 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveTestarChamadaFindByEmail(){
+    public void shouldTestCallFindByEmail(){
         userService.findByEmail(anyString());
         verify(userRepository,times(1)).findByEmail(anyString());
     }
 
     @Test
-    public void deveTestarChamadaAuthentication(){
+    public void shouldTestCallAuthentication(){
 
         SecurityContextHolder.setContext(securityContext);
 
@@ -234,7 +256,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveChamarFindAllByUserSemUserLogado(){
+    public void shouldCallFindAllByUserSemUserLoggedIn(){
 
         SecurityContextHolder.setContext(securityContext);
 
@@ -245,13 +267,13 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveDevolverNullUserLogado(){
+    public void shouldReturnNullUserLoggedIn(){
         SecurityContextHolder.setContext(securityContext);
         assertNull(userService.getLogedUser());
     }
 
     @Test
-    public void deveDevolverUserLogado(){
+    public void shouldReturnUserLoggedIn(){
 
         UserEntity user = UserEntity.builder()
                 .name("joao")
@@ -270,7 +292,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveTestarTrocarImagem() throws BusinessRuleException {
+    public void shouldTestSwapImage() throws BusinessRuleException {
 
         SecurityContextHolder.setContext(securityContext);
 
@@ -288,7 +310,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = BusinessRuleException.class)
-    public void deveDarErroTipoDeArquivoTrocarImagem() throws BusinessRuleException {
+    public void shouldGiveErrorFileTypeSwapImage() throws BusinessRuleException {
 
         SecurityContextHolder.setContext(securityContext);
 

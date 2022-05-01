@@ -36,7 +36,7 @@ public class ForgotPasswordHandlerProducerServiceTest {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Test
-    public void deveChamarEnviarSenhaNova() throws JsonProcessingException {
+    public void shouldCallSendPasswordNew() throws JsonProcessingException {
 
         when(objectMapper.writeValueAsString(any(ForgotPasswordHandlerDTO.class))).thenReturn("senha:romeu");
         when(kafkaTemplate.send(any(Message.class))).thenReturn(getListenable());

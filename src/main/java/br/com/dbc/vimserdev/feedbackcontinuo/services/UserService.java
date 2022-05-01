@@ -1,5 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ChangePasswordDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ForgotPasswordHandlerDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserCreateDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
@@ -69,22 +70,22 @@ public class UserService {
         return userLoged.orElse(null);
     }
 
-    public void changePasswordUserLoged(String oldPassword, String newPassword) throws BusinessRuleException {
+    public void changePasswordUserLoged(ChangePasswordDTO changePasswordDTO) throws BusinessRuleException {
         UserEntity userToUpdate = getLogedUserEntity();
 
-        if (!new BCryptPasswordEncoder().matches(oldPassword, userToUpdate.getPassword())) {
+        if (!new BCryptPasswordEncoder().matches(changePasswordDTO.getOldPassword(), userToUpdate.getPassword())) {
             throw new BusinessRuleException("Senha antiga incompatível.", HttpStatus.UNAUTHORIZED);
         }
 
-        if(!isValidPassword(newPassword)){
+        if(!isValidPassword(changePasswordDTO.getNewPassword())){
             throw new BusinessRuleException("Senha fraca demais", HttpStatus.BAD_REQUEST);
         }
 
-        if(new BCryptPasswordEncoder().matches(newPassword, userToUpdate.getPassword())){
+        if(new BCryptPasswordEncoder().matches(changePasswordDTO.getNewPassword(), userToUpdate.getPassword())){
             throw new BusinessRuleException("Essa já é sua senha atual!", HttpStatus.BAD_REQUEST);
         }
 
-        userToUpdate.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userToUpdate.setPassword(new BCryptPasswordEncoder().encode(changePasswordDTO.getNewPassword()));
         userRepository.save(userToUpdate);
     }
 

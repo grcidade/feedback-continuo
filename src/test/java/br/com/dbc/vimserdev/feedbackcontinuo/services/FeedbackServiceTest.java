@@ -50,7 +50,7 @@ public class FeedbackServiceTest {
     private FeedbackService feedbackService;
 
     @Test(expected = BusinessRuleException.class)
-    public void deveDarErroFeedbackProprioUsuario() throws BusinessRuleException, JsonProcessingException {
+    public void shouldGiveErrorFeedbackToOwnUser() throws BusinessRuleException, JsonProcessingException {
 
         List<Tags> tags = Arrays.asList(Tags.JAVA, Tags.AWS, Tags.CSS);
 
@@ -68,7 +68,7 @@ public class FeedbackServiceTest {
     }
 
     @Test
-    public void deveSalvarUsuario() throws BusinessRuleException, JsonProcessingException {
+    public void shouldSaveUser() throws BusinessRuleException, JsonProcessingException {
 
         List<Tags> tags = Arrays.asList(Tags.JAVA, Tags.AWS, Tags.CSS);
 
@@ -94,7 +94,7 @@ public class FeedbackServiceTest {
     }
 
     @Test
-    public void deveMandarEmailSalvarUsuario() throws BusinessRuleException, JsonProcessingException {
+    public void shouldSendEmailSaveUser() throws BusinessRuleException, JsonProcessingException {
 
         List<Tags> tags = Arrays.asList(Tags.JAVA, Tags.AWS, Tags.CSS);
 
@@ -119,7 +119,7 @@ public class FeedbackServiceTest {
     }
 
     @Test
-    public void deveTestarFeedbacksRecebidosUsuarios() throws BusinessRuleException {
+    public void shouldTestFeedbacksReceivedUsers() throws BusinessRuleException {
 
         List<FeedbackEntity> feedbackEntities = new ArrayList<>();
         Page<FeedbackEntity> feedbackEntityPage = new PageImpl(feedbackEntities);
@@ -137,7 +137,7 @@ public class FeedbackServiceTest {
     }
 
     @Test
-    public void deveTestarFeedbacksDadosUsuarios() throws BusinessRuleException {
+    public void shouldTestFeedbacksSentUsers() throws BusinessRuleException {
 
         List<FeedbackEntity> feedbackEntities = new ArrayList<>();
         Page<FeedbackEntity> feedbackEntityPage = new PageImpl(feedbackEntities);

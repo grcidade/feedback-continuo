@@ -26,7 +26,7 @@ public class TagServiceTest {
     private TagService tagService;
 
     @Test
-    public void deveSalvarTagNoBanco(){
+    public void shouldSaveTagInDatabase(){
 
         when(tagRepository.findByName(anyString())).thenReturn(Optional.empty());
 
@@ -37,7 +37,7 @@ public class TagServiceTest {
     }
 
     @Test
-    public void deveDevolverATag(){
+    public void shouldReturnTag(){
 
         TagEntity tag = TagEntity.builder()
                 .name("teste")

@@ -1,5 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.controllers;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ChangePasswordDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation.UserAPI;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -41,9 +43,8 @@ public class UserController implements UserAPI {
     }
 
     @PutMapping("/update-password")
-    public ResponseEntity<String> updatePasswordUserLoged(@RequestParam String oldPassword,
-                                                          @RequestParam String newPassword) throws BusinessRuleException {
-        userService.changePasswordUserLoged(oldPassword, newPassword);
+    public ResponseEntity<String> updatePasswordUserLoged(@RequestBody @Valid ChangePasswordDTO changePasswordDTO) throws BusinessRuleException {
+        userService.changePasswordUserLoged(changePasswordDTO);
         return new ResponseEntity<>("Senha alterada com sucesso!", HttpStatus.ACCEPTED);
     }
 

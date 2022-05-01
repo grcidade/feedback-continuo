@@ -36,7 +36,7 @@ public class EmailHandlerProducerServiceTest {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Test
-    public void deveChamarEnviarEmail() throws JsonProcessingException {
+    public void shouldCallSendEmail() throws JsonProcessingException {
 
         when(objectMapper.writeValueAsString(any(EmailHandlerDTO.class))).thenReturn("to:romeu");
         when(kafkaTemplate.send(any(Message.class))).thenReturn(getListenable());

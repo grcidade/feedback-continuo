@@ -1,5 +1,6 @@
 package br.com.dbc.vimserdev.feedbackcontinuo.interfaces.documentation;
 
+import br.com.dbc.vimserdev.feedbackcontinuo.dtos.ChangePasswordDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.dtos.UserDTO;
 import br.com.dbc.vimserdev.feedbackcontinuo.exception.BusinessRuleException;
 import io.swagger.annotations.Api;
@@ -8,10 +9,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api
@@ -47,7 +50,7 @@ public interface UserAPI {
             @ApiResponse(code = 401, message = "Senha antiga incompátivel."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção.")
     })
-    ResponseEntity<String> updatePasswordUserLoged(@RequestParam String oldPassword, @RequestParam String newPassword) throws BusinessRuleException;
+    ResponseEntity<String> updatePasswordUserLoged(@RequestBody @Valid ChangePasswordDTO changePasswordDTO) throws BusinessRuleException;
 
     @ApiOperation(value = "Atualiza a imagem do usuário.")
     @ApiResponses(value = {
