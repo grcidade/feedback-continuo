@@ -1,4 +1,4 @@
-package br.com.dbc.vimserdev.feedbackcontinuo;
+package br.com.dbc.vimserdev.feedbackcontinuo.services;
 
 import br.com.dbc.vimserdev.feedbackcontinuo.entities.TagEntity;
 import br.com.dbc.vimserdev.feedbackcontinuo.enums.Tags;
