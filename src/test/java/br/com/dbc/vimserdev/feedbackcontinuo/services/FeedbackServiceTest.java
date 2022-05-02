@@ -20,6 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -169,7 +171,7 @@ public class FeedbackServiceTest {
                 .profileUserImage(null)
                 .message("a")
                 .tags(null)
-                .createdAt(LocalDateTime.now())
+                .createdAt(ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("America/Sao_Paulo")))
                 .build();
     }
 
