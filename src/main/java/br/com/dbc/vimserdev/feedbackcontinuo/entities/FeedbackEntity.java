@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -25,7 +27,7 @@ public class FeedbackEntity {
     private String message;
 
     @Column(name = "created_at")
-    private final LocalDateTime createdAt = LocalDateTime.now();
+    private final ZonedDateTime createdAt = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("America/Sao_Paulo"));;
 
     @Column(name = "is_anonymous")
     private Boolean isAnonymous;

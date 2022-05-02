@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
@@ -22,6 +23,6 @@ public class FeedbackCompleteDTO {
     @ApiModelProperty(value = "Lista de tags.")
     private List<String> tags;
     @ApiModelProperty(value = "Data de criação do feedback.")
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
 }
