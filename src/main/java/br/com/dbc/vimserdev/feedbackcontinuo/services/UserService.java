@@ -30,7 +30,7 @@ public class UserService {
 
     public void create(UserCreateDTO userCreateDTO, MultipartFile profileImage) throws BusinessRuleException {
         if (!isValidEmail(userCreateDTO.getEmail()) || userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
-            throw new BusinessRuleException("Email inválido ou já existente.", HttpStatus.UNAUTHORIZED);
+            throw new BusinessRuleException("Email inválido ou já existente.", HttpStatus.NOT_ACCEPTABLE);
         }
 
         if(!isValidPassword(userCreateDTO.getPassword())){
@@ -125,7 +125,7 @@ public class UserService {
     }
 
     protected UserEntity getUserById(String id) throws BusinessRuleException {
-        return userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não encontrado", HttpStatus.NOT_FOUND));
+        return userRepository.findById(id).orElseThrow(() -> new BusinessRuleException("Usuário não encontrado.", HttpStatus.NOT_FOUND));
     }
 
     private UserDTO buildUserDTO(UserEntity userToTransform){
@@ -140,11 +140,11 @@ public class UserService {
         try {
             String fileExtension = FilenameUtils.getExtension(profileImage.getOriginalFilename());
             if (!Arrays.asList("jpg", "jpeg", "png").contains(fileExtension)) {
-                throw new BusinessRuleException("Tipo de arquivo não suportado", HttpStatus.NOT_ACCEPTABLE);
+                throw new BusinessRuleException("Tipo de arquivo não suportado.", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
             }
             return profileImage.getBytes();
         }catch (IOException e){
-            throw new BusinessRuleException("Erro ao salvar imagem", HttpStatus.EXPECTATION_FAILED);
+            throw new BusinessRuleException("Erro ao salvar imagem.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
