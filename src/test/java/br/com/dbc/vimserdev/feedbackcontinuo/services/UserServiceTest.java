@@ -58,7 +58,7 @@ public class UserServiceTest {
     public void shouldGiveErrorEmail() {
 
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
-                .email("joao@gmail.com")
+                .email("joao@dbccompany.com")
                 .build();
 
         try{
@@ -68,19 +68,16 @@ public class UserServiceTest {
         }
     }
 
-    @Test
-    public void shouldGiveErrorPassword() {
+    @Test(expected = BusinessRuleException.class)
+    public void shouldGiveErrorPassword() throws BusinessRuleException {
 
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .email("a@dbccompany.com.br")
-                .password("1234")
+                .password("64789510Ae")
                 .build();
 
-        try{
             userService.create(userCreateDTO, null);
-        }catch (BusinessRuleException e){
-            assertEquals("Senha fraca demais.", e.getMessage());
-        }
+
     }
 
     @Test
@@ -89,7 +86,7 @@ public class UserServiceTest {
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .email("joao@dbccompany.com.br")
                 .name("joao")
-                .password("Senha@123")
+                .password("64789510Ae!")
                 .build();
 
         userService.create(userCreateDTO, null);

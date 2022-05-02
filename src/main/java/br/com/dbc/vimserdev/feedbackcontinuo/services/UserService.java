@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -155,16 +154,23 @@ public class UserService {
     }
 
     private boolean isValidPassword(String password) {
-        // Tamanho: Min 8 - Max 20;
-        // 1 letra minúscula;
-        // 1 letra maiúscula;
-        // 1 caracter especial;
-        // 1 digito;
-        Pattern regexToValidThePassword = Pattern.compile("^(?=.*[0-9])"
-                + "(?=.*[a-z])(?=.*[A-Z])"
-                + "(?=.*[@#$%^&+=])"
-                + "(?=\\S+$).{8,20}$");
+        if (password.length() < 6) return false;
 
-        return regexToValidThePassword.matcher(password).matches();
+        boolean findNumber = false;
+        boolean findUpperCase = false;
+        boolean findLowerCase = false;
+        boolean findSymbol = false;
+        for (char letter : password.toCharArray()) {
+            if (letter >= '0' && letter <= '9') {
+                findNumber = true;
+            } else if (letter >= 'A' && letter <= 'Z') {
+                findUpperCase = true;
+            } else if (letter >= 'a' && letter <= 'z') {
+                findLowerCase = true;
+            } else {
+                findSymbol = true;
+            }
+        }
+        return findNumber && findUpperCase && findLowerCase && findSymbol;
     }
 }
